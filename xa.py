@@ -17,16 +17,6 @@ def correct(args):
 	#print "correct()"
 	print "correct(", args, ")"
 
-commands = { 
-		 "help":  showHelp,
-		    "h":  showHelp,  
-		"print":  printStuff,
-		    "p":  printStuff,
-		 "list":  listStuff,
-		    "l":  listStuff,
-		    "c":  correct
-	   }
-
 def main():
 	while ( True ):
 		try:
@@ -45,5 +35,16 @@ def main():
 				commands[cmndKey](args)
 
 if __name__ == "__main__":
+
+	commands = { 
+			 "help":  showHelp,
+			    "h":  showHelp,  
+			"print":  printStuff,
+			    "p":  printStuff,
+			 "list":  listStuff,
+			    "l":  listStuff,
+			    "c":  correct
+		   }
+
 	main()
 
