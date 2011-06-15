@@ -1,26 +1,30 @@
 #!/usr/bin/env python
 
 
-def showHelp():
-	print "showHelp()"
+def showHelp(args):
+	#print "showHelp()"
+	print "showHelp(", args, ")"
 
-def printStuff():
-	print "printStuff()"
+def printStuff(args):
+	#print "printStuff()"
+	print "printStuff(", args, ")"
 
-def listStuff():
-	print "listStuff()"
+def listStuff(args):
+	#print "listStuff()"
+	print "listStuff(", args, ")"
 
-def correct():
-	print "correct()"
+def correct(args):
+	#print "correct()"
+	print "correct(", args, ")"
 
 commands = { 
-		"help":showHelp,
-		"h":showHelp,  
-		"print":printStuff,
-		"p":printStuff,
-		"list":listStuff,
-		"l":listStuff,
-		"c":correct
+		 "help":  showHelp,
+		    "h":  showHelp,  
+		"print":  printStuff,
+		    "p":  printStuff,
+		 "list":  listStuff,
+		    "l":  listStuff,
+		    "c":  correct
 	   }
 
 def main():
@@ -34,10 +38,11 @@ def main():
 
 		if len(cmnd) > 0:
 			cmndKey = cmnd.split(" ")[0]
+			args = cmnd.split(" ")[1:]
 			print cmnd, cmndKey, commands.keys()
 			if cmndKey in commands.keys():
 				print commands[cmndKey]
-				commands[cmndKey]()
+				commands[cmndKey](args)
 
 if __name__ == "__main__":
 	main()
