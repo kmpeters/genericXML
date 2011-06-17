@@ -36,8 +36,72 @@ def correct(args):
 	#print "correct()"
 	print "correct(", args, ")"
 
+def openLogFile():
+	# Allow the user to specify an xml file when running the script
+	if len(sys.argv) > 1:
+		filename = sys.argv[1]
+	else:
+		filename = "%s/%s" % (os.getcwd(), xmlFilename)
+		# Alternately could use the script location (sys.argv[0]), but that seems like a bad decision
+
+	# turn the filename into something useful (why was this needed in other code?)
+	directory = os.path.split(filename)[0]
+	logfilename = os.path.split(filename)[1]
+
+	# Handle empty directories when file is in current dir
+	if directory == '':
+		directory = "."
+	#print "%s/%s" % (directory, logfilename)
+
+	# Check to see if the file exists
+	if not os.path.isfile(filename):
+		print filename, "DOES NOT EXIST!"
+
+		# Ask the user if the file should be created
+		decision = raw_input("Would you like to create it? (y/n) ")
+		if decision in ("Yes", "yes", "Y", "y"):
+			# Create the file
+			print "Creating %s" % filename
+			tree = etree.ElementTree()
+			log = etree.Element(xmlRoot)
+			# Add a comment so an empty xml file can be properly read
+			comment = etree.Comment("This is an empty file")
+			log.append(comment)
+			indent(log)
+			tree._setroot(log)
+			tree.write(filename)
+		else:
+			print "Exiting"
+			return (False, None, None)
+
+	# Read the file
+	print "Reading %s" % filename
+	tree = etree.parse(filename)
+	log = tree.getroot()
+	return (True, tree, log)
+
+# Should probably move this to XML-specific file
+def indent(elem, level=0):
+	i = "\n" + level*"  "
+	if len(elem):
+		if not elem.text or not elem.text.strip():
+			elem.text = i + "  "
+		if not elem.tail or not elem.tail.strip():
+			elem.tail = i
+		for elem in elem:
+			indent(elem, level+1)
+		if not elem.tail or not elem.tail.strip():
+			elem.tail = i
+	else:
+		if level and (not elem.tail or not elem.tail.strip()):
+			elem.tail = i
+
 def main():
-	while ( True ):
+	# Open the log file
+	run, tree, log = openLogFile()
+
+	# Enter command interpreter mode
+	while ( run ):
 		try:
 			cmnd = raw_input(" > ")
 		except KeyboardInterrupt:
@@ -54,6 +118,9 @@ def main():
 				commands[cmndKey](args)
 
 if __name__ == "__main__":
+	import sys
+	import os
+	import xml.etree.ElementTree as etree
 
 	commands = { 
 			 "help":  showHelp,
@@ -64,6 +131,9 @@ if __name__ == "__main__":
 			    "l":  listStuff,
 			    "c":  correct
 		   }
+
+	xmlFilename = "generic_log.xml"
+	xmlRoot = "log"
 
 	xmlDef = [ 
 			"date",
