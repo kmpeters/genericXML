@@ -1,21 +1,14 @@
 #!/usr/bin/env python
 
 
-def showHelp(args):
+def showHelp(*args):
 	#print "showHelp()"
 	print "showHelp(", args, ")"
 
-def printStuff(args):
+def printStuff(*args):
 	#print "printStuff()"
 	print "printStuff(", args, ")"
 	print xmlDef
-	#!for e in xmlDef:
-	#!	if type(e) is str:
-	#!		print e, "is a string"
-	#!	elif type(e) is list:
-	#!		print e, "is a list"
-	#!	else:
-	#!		print type(e)
 	recursivePrintList(xmlDef)
 
 def recursivePrintList(arg):
@@ -28,13 +21,16 @@ def recursivePrintList(arg):
 		else:
 			print type(e)
 
-def listStuff(args):
+def listStuff(*args):
 	#print "listStuff()"
 	print "listStuff(", args, ")"
 
-def correct(args):
+def correct(*args):
 	#print "correct()"
 	print "correct(", args, ")"
+
+def addData(*args):
+	print "addData(", args, ")"
 
 def openLogFile():
 	# Allow the user to specify an xml file when running the script
@@ -115,7 +111,7 @@ def main():
 			print cmnd, cmndKey, commands.keys()
 			if cmndKey in commands.keys():
 				print commands[cmndKey]
-				commands[cmndKey](args)
+				commands[cmndKey](*args)
 
 if __name__ == "__main__":
 	import sys
@@ -129,7 +125,9 @@ if __name__ == "__main__":
 			    "p":  printStuff,
 			 "list":  listStuff,
 			    "l":  listStuff,
-			    "c":  correct
+			    "c":  correct,
+			  "add":  addData,
+			    "a":  addData
 		   }
 
 	xmlFilename = "generic_log.xml"
