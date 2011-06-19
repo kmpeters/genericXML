@@ -58,39 +58,15 @@ def openLogFile():
 		if decision in ("Yes", "yes", "Y", "y"):
 			# Create the file
 			print "Creating %s" % filename
-			tree = etree.ElementTree()
-			log = etree.Element(xmlRoot)
-			# Add a comment so an empty xml file can be properly read
-			comment = etree.Comment("This is an empty file")
-			log.append(comment)
-			indent(log)
-			tree._setroot(log)
-			tree.write(filename)
+			kmpXML.createEmptyXML(filename, xmlRoot)
 		else:
 			print "Exiting"
 			return (False, None, None)
 
 	# Read the file
 	print "Reading %s" % filename
-	tree = etree.parse(filename)
-	log = tree.getroot()
+	tree, log = kmpXML.readXML(filename)
 	return (True, tree, log)
-
-# Should probably move this to XML-specific file
-def indent(elem, level=0):
-	i = "\n" + level*"  "
-	if len(elem):
-		if not elem.text or not elem.text.strip():
-			elem.text = i + "  "
-		if not elem.tail or not elem.tail.strip():
-			elem.tail = i
-		for elem in elem:
-			indent(elem, level+1)
-		if not elem.tail or not elem.tail.strip():
-			elem.tail = i
-	else:
-		if level and (not elem.tail or not elem.tail.strip()):
-			elem.tail = i
 
 def main():
 	# Open the log file
@@ -116,7 +92,7 @@ def main():
 if __name__ == "__main__":
 	import sys
 	import os
-	import xml.etree.ElementTree as etree
+	import kmpXML
 
 	commands = { 
 			 "help":  showHelp,
