@@ -30,8 +30,28 @@ def recursivePrintList(arg):
 		else:
 			print type(e)
 
+def recursivePromptEntry(labels, array, level):
+	for i in range(len(labels)):
+		if type(labels[i]) is str:
+			promptStr = "  " * level + "%s: " % labels[i]
+			#response = raw_input("%s: " % labels[i])
+			response = raw_input(promptStr)
+			array.append(response)
+		elif type(labels[i]) is list:
+			array.append([])
+			recursivePromptEntry(labels[i], array[i], level+1)
+
+def getUserInput():
+	# At this point in time there is no helpful printing of existing entries or autocomplete
+	userInput = []
+	recursivePromptEntry(xmlDef, userInput, 0)
+
 def addData(*args):
 	print "addData(", args, ")"
+	
+	print
+	userEntries = getUserInput()
+	print
 
 def openLogFile():
 	# Allow the user to specify an xml file when running the script
