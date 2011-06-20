@@ -1,9 +1,18 @@
 #!/usr/bin/env python
 
-
+# Begin dummy functions
 def showHelp(*args):
 	#print "showHelp()"
 	print "showHelp(", args, ")"
+
+def listStuff(*args):
+	#print "listStuff()"
+	print "listStuff(", args, ")"
+
+def correct(*args):
+	#print "correct()"
+	print "correct(", args, ")"
+# End dummy functions
 
 def printStuff(*args):
 	#print "printStuff()"
@@ -20,14 +29,6 @@ def recursivePrintList(arg):
 			recursivePrintList(i)
 		else:
 			print type(e)
-
-def listStuff(*args):
-	#print "listStuff()"
-	print "listStuff(", args, ")"
-
-def correct(*args):
-	#print "correct()"
-	print "correct(", args, ")"
 
 def addData(*args):
 	print "addData(", args, ")"
