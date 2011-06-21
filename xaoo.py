@@ -73,7 +73,7 @@ class genXml:
 		#print "printStuff()"
 		print "printStuff(", args, ")"
 		print self.xmlEntryDef
-		self.recursivePrintList(xmlEntryDef)
+		self.recursivePrintList(self.xmlEntryDef)
 	
 		return True
 
@@ -138,10 +138,10 @@ class genXml:
 	def getUserInput(self):
 		# At this point in time there is no helpful printing of existing entries or autocomplete
 		userInput = []
-		self.recursivePromptEntry(xmlEntryDef, userInput)
+		self.recursivePromptEntry(self.xmlEntryDef, userInput)
 		return userInput[:]
 
-	def addData(*args):
+	def addData(self, *args):
 		print "addData(", args, ")"
 	
 		print
@@ -153,18 +153,18 @@ class genXml:
 	
 		return True
 
-	def openLogFile():
+	def openLogFile(self):
 		# Allow the user to specify an xml file when running the script
 		if len(sys.argv) > 1:
 			filename = sys.argv[1]
 		else:
-			filename = "%s/%s" % (os.getcwd(), xmlFilename)
+			filename = "%s/%s" % (os.getcwd(), self.xmlFilename)
 			# Alternately could use the script location (sys.argv[0]), but that seems like a bad decision
 
 		#
-		return kmpXMLoo.kmpXML(filename) 
+		return kmpXMLoo.kmpXML(filename, self.xmlRoot) 
 
-	def main():
+	def main(self):
 		run = self.xmlLog.run
 
 		# Enter command interpreter mode
@@ -180,9 +180,9 @@ class genXml:
 				cmndKey = cmnd.split(" ")[0]
 				args = cmnd.split(" ")[1:]
 				#!print cmnd, cmndKey, commands.keys()
-				if cmndKey in commands.keys():
+				if cmndKey in self.commands.keys():
 					#!print commands[cmndKey]
-					run = commands[cmndKey](*args)
+					run = self.commands[cmndKey](*args)
 
 if __name__ == "__main__":
 	import sys

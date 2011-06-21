@@ -8,7 +8,7 @@ import shutil
 import os.path
 
 class kmpXML:
-	def __init__(self, filename):
+	def __init__(self, filename, xmlRoot):
 		self.run = True
 		self.dirty = False
 		self.filename = filename
@@ -35,7 +35,7 @@ class kmpXML:
 		if self.run == True:
 			# Read the file
 			print "Reading %s" % filename
-			self.tree, self.root = kmpXML.readXML(filename)
+			self.tree, self.root = self.readXML(filename)
 
 	def recursiveAddElem(self, labels, entries, elem, level=0):
 		for i in range(len(labels)):
@@ -71,7 +71,7 @@ class kmpXML:
 			if not elem.tail or not elem.tail.strip():
 				elem.tail = i
 			for elem in elem:
-				indent(elem, level+1)
+				self.indent(elem, level+1)
 			if not elem.tail or not elem.tail.strip():
 				elem.tail = i
 		else:
@@ -84,7 +84,7 @@ class kmpXML:
 		# Add a comment so an empty xml file can be properly read
 		comment = etree.Comment("This is an empty file")
 		root.append(comment)
-		indent(root)
+		self.indent(root)
 		tree._setroot(root)
 		tree.write(filename)
 
@@ -96,10 +96,10 @@ class kmpXML:
 
 	def saveXML(self):
 		# Move current file to backup
-		newfilename = "%s.bup" % filename
-		shutil.move(filename, newfilename)
+		newfilename = "%s.bup" % self.filename
+		shutil.move(self.filename, newfilename)
 		# Make tree presentable
-		indent(self.root)
+		self.indent(self.root)
 		# Write file
 		self.tree.write(self.filename)
 		# Clear the dirty flag
