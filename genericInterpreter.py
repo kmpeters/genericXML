@@ -1,19 +1,19 @@
 #!/usr/bin/env python
 
 
-def showHelp(args):
+def showHelp(*args):
 	#print "showHelp()"
 	print "showHelp(", args, ")"
 
-def printStuff(args):
+def printStuff(*args):
 	#print "printStuff()"
 	print "printStuff(", args, ")"
 
-def listStuff(args):
+def listStuff(*args):
 	#print "listStuff()"
 	print "listStuff(", args, ")"
 
-def correct(args):
+def correct(*args):
 	#print "correct()"
 	print "correct(", args, ")"
 
@@ -32,7 +32,7 @@ def main():
 			print cmnd, cmndKey, commands.keys()
 			if cmndKey in commands.keys():
 				print commands[cmndKey]
-				commands[cmndKey](args)
+				commands[cmndKey](*args)
 
 if __name__ == "__main__":
 
