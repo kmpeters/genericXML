@@ -4,15 +4,22 @@
 def showHelp(*args):
 	#print "showHelp()"
 	print "showHelp(", args, ")"
+	return True
 
 def listStuff(*args):
 	#print "listStuff()"
 	print "listStuff(", args, ")"
+	return True
 
 def correct(*args):
 	#print "correct()"
 	print "correct(", args, ")"
+	return True
 # End dummy functions
+
+def quit(*args):
+	print "Exiting..."
+	return False
 
 def printStuff(*args):
 	#print "printStuff()"
@@ -52,6 +59,8 @@ def addData(*args):
 	print
 	userEntries = getUserInput()
 	print
+	
+	return True
 
 def openLogFile():
 	# Allow the user to specify an xml file when running the script
@@ -108,7 +117,7 @@ def main():
 			print cmnd, cmndKey, commands.keys()
 			if cmndKey in commands.keys():
 				print commands[cmndKey]
-				commands[cmndKey](*args)
+				run = commands[cmndKey](*args)
 
 if __name__ == "__main__":
 	import sys
@@ -124,7 +133,8 @@ if __name__ == "__main__":
 			    "l":  listStuff,
 			    "c":  correct,
 			  "add":  addData,
-			    "a":  addData
+			    "a":  addData,
+			 "quit":  quit
 		   }
 
 	xmlFilename = "generic_log.xml"
