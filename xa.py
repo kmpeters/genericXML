@@ -60,6 +60,7 @@ def recursivePromptEntry(labels, array, level):
 			array.append([])
 			# by design dictionaries will only have one key
 			key = labels[i].keys()[0]
+			print "  " * level + "[%s]" % key
 			recursivePromptEntry(labels[i][key], array[i], level+1)
 	
 	if level == 0:
@@ -164,6 +165,11 @@ if __name__ == "__main__":
 			[
 				"title",
 				"subject",
+				{"subremark":
+				[
+					"subtitle",
+					"subsubject"
+				]},
 				"entry",
 				"effort"
 			]},
