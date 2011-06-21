@@ -1,5 +1,9 @@
 #!/usr/bin/env python
 
+### Functions to customize (and maybe move to a different file)
+def prePromptHook(arg):
+	return
+
 # Begin dummy functions
 def dummy(*args):
 	return True
@@ -50,6 +54,9 @@ def recursivePrintList(arg):
 def recursivePromptEntry(labels, array, level):
 	for i in range(len(labels)):
 		if type(labels[i]) is str:
+			# Allow for printing auto-complete suggestions or customizing prompt
+			prePromptHook(labels[i])
+			# Generic promptStr
 			promptStr = "  " * level + "%s: " % labels[i]
 			response = raw_input(promptStr)
 			array.append(response)
