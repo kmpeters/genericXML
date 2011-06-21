@@ -44,20 +44,21 @@ def recursivePrintList(arg):
 			print i, "is a list"
 			recursivePrintList(i)
 		elif type(i) is dict:
-			# by design dictionaries will only have one key
+			# by design dictionary will only have one key
 			key = i.keys()[0]
 			print i, "is a dictionary"
 			recursivePrintList(i[key])
 		else:
 			print type(i)
 
-def recursivePromptEntry(labels, array, level):
+def recursivePromptEntry(labels, array, level=0):
 	for i in range(len(labels)):
 		if type(labels[i]) is str:
 			# Allow for printing auto-complete suggestions or customizing prompt
 			prePromptHook(labels[i])
 			# Generic promptStr
 			promptStr = "  " * level + "%s: " % labels[i]
+			# Will it be possible to validate response?
 			response = raw_input(promptStr)
 			array.append(response)
 		elif type(labels[i]) is list:
@@ -65,7 +66,7 @@ def recursivePromptEntry(labels, array, level):
 			recursivePromptEntry(labels[i], array[i], level+1)
 		elif type(labels[i]) is dict:
 			array.append([])
-			# by design dictionaries will only have one key
+			# by design dictionary will only have one key
 			key = labels[i].keys()[0]
 			print "  " * level + "[%s]" % key
 			recursivePromptEntry(labels[i][key], array[i], level+1)
@@ -73,10 +74,21 @@ def recursivePromptEntry(labels, array, level):
 	if level == 0:
 		print array
 
+def recursiveAddEntry(labels, entries, level=0):
+	for i in range(len(labels)):
+		if type(labels[i]) is str:
+			print labels[i], "->",entries[i]
+		if type(labels[i]) is dict:
+			# by design dictionary will only have one key
+			key = labels[i].keys()[0]
+			print "*%s" % key
+			recursiveAddEntry(labels[i][key], entries[i], level+1)
+
 def getUserInput():
 	# At this point in time there is no helpful printing of existing entries or autocomplete
 	userInput = []
-	recursivePromptEntry(xmlDef, userInput, 0)
+	recursivePromptEntry(xmlDef, userInput)
+	return userInput[:]
 
 def addData(*args):
 	print "addData(", args, ")"
@@ -84,6 +96,9 @@ def addData(*args):
 	print
 	userEntries = getUserInput()
 	print
+
+	#
+	recursiveAddEntry(xmlDef, userEntries)
 	
 	return True
 
