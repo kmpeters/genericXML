@@ -24,15 +24,11 @@ def correct(*args):
 	return True
 # End dummy functions
 
-def quit(*args):
-	print "Exiting..."
-	return False
-
 def printStuff(*args):
 	#print "printStuff()"
 	print "printStuff(", args, ")"
-	print xmlDef
-	recursivePrintList(xmlDef)
+	print xmlEntryDef
+	recursivePrintList(xmlEntryDef)
 	
 	return True
 
@@ -51,6 +47,16 @@ def recursivePrintList(arg):
 		else:
 			print type(i)
 
+def quit(*args):
+	print "Exiting..."
+	return False
+
+def save(*args):
+	global filename
+	#!print tree, log, filename
+	kmpXML.saveXML(tree, log, filename)
+	return True
+
 def recursivePromptEntry(labels, array, level=0):
 	for i in range(len(labels)):
 		if type(labels[i]) is str:
@@ -62,6 +68,7 @@ def recursivePromptEntry(labels, array, level=0):
 			response = raw_input(promptStr)
 			array.append(response)
 		elif type(labels[i]) is list:
+			print "OMG!!! THIS IS A LIST!!!"
 			array.append([])
 			recursivePromptEntry(labels[i], array[i], level+1)
 		elif type(labels[i]) is dict:
@@ -72,7 +79,8 @@ def recursivePromptEntry(labels, array, level=0):
 			recursivePromptEntry(labels[i][key], array[i], level+1)
 	
 	if level == 0:
-		print array
+		#!print array
+		pass
 
 def recursiveAddEntry(labels, entries, level=0):
 	for i in range(len(labels)):
@@ -87,7 +95,7 @@ def recursiveAddEntry(labels, entries, level=0):
 def getUserInput():
 	# At this point in time there is no helpful printing of existing entries or autocomplete
 	userInput = []
-	recursivePromptEntry(xmlDef, userInput)
+	recursivePromptEntry(xmlEntryDef, userInput)
 	return userInput[:]
 
 def addData(*args):
@@ -97,8 +105,8 @@ def addData(*args):
 	userEntries = getUserInput()
 	print
 
-	#
-	recursiveAddEntry(xmlDef, userEntries)
+	# This code could be cleaner if xml definition stuff was moved
+	kmpXML.addEntry(log, xmlEntry, xmlEntryDef, userEntries)
 	
 	return True
 
@@ -136,11 +144,12 @@ def openLogFile():
 	# Read the file
 	print "Reading %s" % filename
 	tree, log = kmpXML.readXML(filename)
-	return (True, tree, log)
+	return (True, tree, log, filename)
 
 def main():
+	global tree, log, filename
 	# Open the log file
-	run, tree, log = openLogFile()
+	run, tree, log, filename = openLogFile()
 
 	# Enter command interpreter mode
 	while ( run ):
@@ -174,13 +183,16 @@ if __name__ == "__main__":
 			    "c":  dummy,
 			  "add":  addData,
 			    "a":  addData,
-			 "quit":  quit
+			 "quit":  quit,
+			 "save":  save,
+			    "s":  save
 		   }
 
 	xmlFilename = "generic_log.xml"
 	xmlRoot = "log"
+	xmlEntry = "entry"
 
-	xmlDef = [ 
+	xmlEntryDef = [
 			"date",
 			"author",
 			{"remark":
@@ -192,11 +204,15 @@ if __name__ == "__main__":
 					"subtitle",
 					"subsubject"
 				]},
-				"entry",
+				"index",
 				"effort"
 			]},
 			"note"
 		]
+
+	filename = ""
+	tree = None
+	log = None
 				
 	main()
 
