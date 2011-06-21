@@ -39,8 +39,13 @@ def recursivePrintList(arg):
 		elif type(i) is list:
 			print i, "is a list"
 			recursivePrintList(i)
+		elif type(i) is dict:
+			# by design dictionaries will only have one key
+			key = i.keys()[0]
+			print i, "is a dictionary"
+			recursivePrintList(i[key])
 		else:
-			print type(e)
+			print type(i)
 
 def recursivePromptEntry(labels, array, level):
 	for i in range(len(labels)):
@@ -51,6 +56,14 @@ def recursivePromptEntry(labels, array, level):
 		elif type(labels[i]) is list:
 			array.append([])
 			recursivePromptEntry(labels[i], array[i], level+1)
+		elif type(labels[i]) is dict:
+			array.append([])
+			# by design dictionaries will only have one key
+			key = labels[i].keys()[0]
+			recursivePromptEntry(labels[i][key], array[i], level+1)
+	
+	if level == 0:
+		print array
 
 def getUserInput():
 	# At this point in time there is no helpful printing of existing entries or autocomplete
@@ -147,13 +160,14 @@ if __name__ == "__main__":
 	xmlDef = [ 
 			"date",
 			"author",
-			"remark",
+			{"remark":
 			[
 				"title",
 				"subject",
 				"entry",
 				"effort"
-			]
+			]},
+			"note"
 		]
 				
 	main()
