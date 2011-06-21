@@ -1,6 +1,9 @@
 #!/usr/bin/env python
 
 # Begin dummy functions
+def dummy(*args):
+	return True
+
 def showHelp(*args):
 	#print "showHelp()"
 	print "showHelp(", args, ")"
@@ -26,6 +29,8 @@ def printStuff(*args):
 	print "printStuff(", args, ")"
 	print xmlDef
 	recursivePrintList(xmlDef)
+	
+	return True
 
 def recursivePrintList(arg):
 	for i in arg:
@@ -41,7 +46,6 @@ def recursivePromptEntry(labels, array, level):
 	for i in range(len(labels)):
 		if type(labels[i]) is str:
 			promptStr = "  " * level + "%s: " % labels[i]
-			#response = raw_input("%s: " % labels[i])
 			response = raw_input(promptStr)
 			array.append(response)
 		elif type(labels[i]) is list:
@@ -114,9 +118,9 @@ def main():
 		if len(cmnd) > 0:
 			cmndKey = cmnd.split(" ")[0]
 			args = cmnd.split(" ")[1:]
-			print cmnd, cmndKey, commands.keys()
+			#!print cmnd, cmndKey, commands.keys()
 			if cmndKey in commands.keys():
-				print commands[cmndKey]
+				#!print commands[cmndKey]
 				run = commands[cmndKey](*args)
 
 if __name__ == "__main__":
@@ -125,13 +129,13 @@ if __name__ == "__main__":
 	import kmpXML
 
 	commands = { 
-			 "help":  showHelp,
-			    "h":  showHelp,  
+			 "help":  dummy,
+			    "h":  dummy,  
 			"print":  printStuff,
 			    "p":  printStuff,
-			 "list":  listStuff,
-			    "l":  listStuff,
-			    "c":  correct,
+			 "list":  dummy,
+			    "l":  dummy,
+			    "c":  dummy,
 			  "add":  addData,
 			    "a":  addData,
 			 "quit":  quit
