@@ -43,16 +43,33 @@ class xmlLog:
 			self.tree, self.root = self.readXML(filename)
 
 
-	def getPrintElemArray(self, elem):
+	def recursiveGetElemContent(self, elem, array, level=0):
 		for e in elem:
-			print e
+			if len(e) == 0:
+				if e.text == None:
+					text = ""
+				else:
+					text = e.text
+				#!print "    " * level + e.tag + "\t" + text
+				array.append(text)
+			else:
+				#!print "    " * level + e.tag
+				array.append([])
+				self.recursiveGetElemContent(e, array[len(array)-1], level+1)
+
+		if level == 0:
+			return array[:]
 
 	def getPrintLogArray(self):
 		logArray = []
 		for elem in self.root:
-			print elem
+			#!print elem
+			elemArray = []
 			if elem.tag == self.xmlEntry:
-				print self.getPrintElemArray(elem)
+				array = self.recursiveGetElemContent(elem, elemArray)
+				#!print array, len(array)
+				logArray.append( array )
+		return logArray[:]
 
 	def recursiveAddElem(self, labels, entries, elem, level=0):
 		for i in range(len(labels)):

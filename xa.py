@@ -64,14 +64,11 @@ class xmlCli:
 
 	# Begin dummy functions
 	def dummy(self, *args):
+		#!print "dummy(", args, ")"
 		return True
 
 	def showHelp(self, *args):
 		print "showHelp(", args, ")"
-		return True
-
-	def listStuff(self, *args):
-		print "listStuff(", args, ")"
 		return True
 
 	def correct(self, *args):
@@ -102,7 +99,9 @@ class xmlCli:
 				print "Error: ", type(i)
 
 	def printXmlLog(self, *args):
-		self.xmlLog.getPrintLogArray()
+		contentArray = self.xmlLog.getPrintLogArray()
+		print contentArray
+
 		return True
 
 	def quit(self, *args):
