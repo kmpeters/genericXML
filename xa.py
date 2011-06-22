@@ -162,7 +162,7 @@ class genXml:
 			# Alternately could use the script location (sys.argv[0]), but that seems like a bad decision
 
 		#
-		return kmpXMLoo.kmpXML(filename, self.xmlRoot) 
+		return kmpXML.kmpXML(filename, self.xmlRoot) 
 
 	def main(self):
 		run = self.xmlLog.run
