@@ -26,8 +26,8 @@ class xmlCli:
 				    "h": self.dummy,  
 				  "def": self.printXmlDef,
 				    "d": self.printXmlDef,
-				"print": self.dummy,
-				    "p": self.dummy,
+				"print": self.printXmlLog,
+				    "p": self.printXmlLog,
 				    "c": self.dummy,
 				  "add": self.addData,
 				    "a": self.addData,
@@ -101,6 +101,10 @@ class xmlCli:
 			else:
 				print "Error: ", type(i)
 
+	def printXmlLog(self, *args):
+		self.xmlLog.getPrintLogArray()
+		return True
+
 	def quit(self, *args):
 		if self.xmlLog.dirty == False:
 			print "Exiting..."
@@ -169,8 +173,7 @@ class xmlCli:
 		userEntries = self.getUserInput()
 		print
 
-		# This code could be cleaner if xml definition stuff was moved
-		self.xmlLog.addEntry(self.xmlEntry, self.xmlEntryDef, userEntries)
+		self.xmlLog.addEntry(userEntries)
 	
 		return True
 
@@ -183,7 +186,7 @@ class xmlCli:
 			# Alternately could use the script location (sys.argv[0]), but that seems like a bad decision
 
 		#
-		return xmlLog.xmlLog(filename, self.xmlRoot) 
+		return xmlLog.xmlLog(filename, self.xmlRoot, self.xmlEntry, self.xmlEntryDef[:]) 
 
 	def main(self):
 		run = self.xmlLog.run

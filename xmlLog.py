@@ -8,16 +8,21 @@ import shutil
 import os.path
 
 class xmlLog:
-	def __init__(self, filename, xmlRoot):
+	def __init__(self, filename, xmlRoot, xmlEntry, xmlEntryDef):
 		self.run = True
 		self.dirty = False
 		self.filename = filename
+
 		# Split filename into dir and name
 		self.directory = os.path.split(filename)[0]
 		self.logfilename = os.path.split(filename)[1]
 		# Handle empty directories when file is in cwd
 		if self.directory == '':
 			self.directory = "."
+
+		self.xmlRoot = xmlRoot
+		self.xmlEntry = xmlEntry
+		self.xmlEntryDef = xmlEntryDef
 
 		# Check to see if the file exists
 		if not os.path.isfile(filename):
@@ -37,6 +42,18 @@ class xmlLog:
 			print "Reading %s" % filename
 			self.tree, self.root = self.readXML(filename)
 
+
+	def getPrintElemArray(self, elem):
+		for e in elem:
+			print e
+
+	def getPrintLogArray(self):
+		logArray = []
+		for elem in self.root:
+			print elem
+			if elem.tag == self.xmlEntry:
+				print self.getPrintElemArray(elem)
+
 	def recursiveAddElem(self, labels, entries, elem, level=0):
 		for i in range(len(labels)):
 			if type(labels[i]) is str:
@@ -55,11 +72,11 @@ class xmlLog:
 		entry = etree.SubElement(root, entryStr, index="%i" % length)
 		return entry
 
-	def addEntry(self, xmlEntry, labels, entries):
+	def addEntry(self, entries):
 		# Add an entry to the root
-		entry = self.appendEntry(self.root, xmlEntry)
+		entry = self.appendEntry(self.root, self.xmlEntry)
 		# Populate the entry with the users input
-		self.recursiveAddElem(labels, entries, entry)
+		self.recursiveAddElem(self.xmlEntryDef, entries, entry)
 		# Set the dirty flag
 		self.dirty = True
 
