@@ -18,8 +18,8 @@ class xmlCli:
 		self.commands = { 
 				 "help": self.dummy,
 				    "h": self.dummy,  
-				"print": self.printStuff,
-				    "p": self.printStuff,
+				"print": self.printXmlDef,
+				    "p": self.printXmlDef,
 				 "list": self.dummy,
 				    "l": self.dummy,
 				    "c": self.dummy,
@@ -61,41 +61,37 @@ class xmlCli:
 		return True
 
 	def showHelp(self, *args):
-		#print "showHelp()"
 		print "showHelp(", args, ")"
 		return True
 
 	def listStuff(self, *args):
-		#print "listStuff()"
 		print "listStuff(", args, ")"
 		return True
 
 	def correct(self, *args):
-		#print "correct()"
 		print "correct(", args, ")"
 		return True
 	# End dummy functions
 
-	def printStuff(self, *args):
-		#print "printStuff()"
-		print "printStuff(", args, ")"
-		print self.xmlEntryDef
+	def printXmlDef(self, *args):
+		#!print "printStuff(", args, ")"
+		#!print self.xmlEntryDef
 		self.recursivePrintList(self.xmlEntryDef)
 	
 		return True
 
-	def recursivePrintList(self, arg):
+	def recursivePrintList(self, arg, level=0):
+		indentStr = "    "
 		for i in arg:
 			if type(i) is str:
-				print i, "is a string"
-			elif type(i) is list:
-				print i, "is a list"
-				self.recursivePrintList(i)
+				#!print i, "is a string"
+				print indentStr * level + i
 			elif type(i) is dict:
 				# by design dictionary will only have one key
 				key = i.keys()[0]
-				print i, "is a dictionary"
-				self.recursivePrintList(i[key])
+				#!print i, "is a dictionary"
+				print indentStr * level + key
+				self.recursivePrintList(i[key], level+1)
 			else:
 				print type(i)
 
@@ -117,16 +113,14 @@ class xmlCli:
 				# Will it be possible to validate response?
 				response = raw_input(promptStr)
 				array.append(response)
-			elif type(labels[i]) is list:
-				print "OMG!!! THIS IS A LIST!!!"
-				array.append([])
-				self.recursivePromptEntry(labels[i], array[i], level+1)
 			elif type(labels[i]) is dict:
 				array.append([])
 				# by design dictionary will only have one key
 				key = labels[i].keys()[0]
 				print "  " * level + "[%s]" % key
 				self.recursivePromptEntry(labels[i][key], array[i], level+1)
+			else:
+				print "--> Unhandled prompt entry type: ", type(labels[i])
 	
 		if level == 0:
 			#!print array
