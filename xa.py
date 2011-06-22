@@ -3,6 +3,11 @@
 # xmlLog's command-line interface
 #
 
+# Stuff to add:
+# 0. help
+# 1. tab completion skeleton
+# 2. correct entry function with appropriate hooks for tab completion and option printing
+
 import sys
 import os
 import string
@@ -19,10 +24,10 @@ class xmlCli:
 		self.commands = { 
 				 "help": self.dummy,
 				    "h": self.dummy,  
-				"print": self.printXmlDef,
-				    "p": self.printXmlDef,
-				 "list": self.dummy,
-				    "l": self.dummy,
+				  "def": self.printXmlDef,
+				    "d": self.printXmlDef,
+				"print": self.dummy,
+				    "p": self.dummy,
 				    "c": self.dummy,
 				  "add": self.addData,
 				    "a": self.addData,
