@@ -98,9 +98,34 @@ class xmlCli:
 			else:
 				print "Error: ", type(i)
 
+	def recursiveDisplayXmlEntry(self, labels, index, entry, level=0):
+		if level == 0:
+			print "index:\t\t%s" % index
+
+		for i in range(len(labels)):
+			if type(labels[i]) is str:
+				if ( len(labels[i]) < 7 ):
+					print "%s:\t\t%s" % (labels[i], entry[i])
+				else:
+					print "%s:\t%s" % (labels[i], entry[i])
+			elif type(labels[i]) is dict:
+				# by design dictionary will only have one key
+				key = labels[i].keys()[0]
+				self.recursiveDisplayXmlEntry(labels[i][key], index, entry[i], level+1)
+
+		if level == 0:
+			print
+
+	def displayXmlLog(self, contentArray):
+		print
+		for i in range(len(contentArray)):
+			index = i + 1
+			self.recursiveDisplayXmlEntry(self.xmlEntryDef, index, contentArray[i])
+
 	def printXmlLog(self, *args):
 		contentArray = self.xmlLog.getPrintLogArray()
-		print contentArray
+		#!print contentArray
+		self.displayXmlLog(contentArray)
 
 		return True
 
