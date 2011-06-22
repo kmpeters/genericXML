@@ -5,6 +5,7 @@
 
 import sys
 import os
+import string
 import xmlLog
 
 class xmlCli:
@@ -93,15 +94,38 @@ class xmlCli:
 				print indentStr * level + key
 				self.recursivePrintList(i[key], level+1)
 			else:
-				print type(i)
+				print "Error: ", type(i)
 
 	def quit(self, *args):
-		print "Exiting..."
-		return False
+		if self.xmlLog.dirty == False:
+			print "Exiting..."
+			return False
+		else:
+			raw_ack = raw_input("You have unsaved changes, are you sure you want to quit without saving? ")
+			ack = string.strip(raw_ack)
+			if ack in ("Yes", "yes", 'Y', 'y'):
+				print "Discarding changes and exiting..."
+				return False
+			else:
+				print "Excellent choice!"
+				return True
 
 	def save(self, *args):
 		self.xmlLog.saveXML()
 		return True
+
+	# Diagnostic function which at the moment isn't particularly useful. May help for correct functionality.
+	def recursivePrintEntries(self, labels, entries, level=0):
+		for i in range(len(labels)):
+			if type(labels[i]) is str:
+				print labels[i], "->",entries[i]
+			if type(labels[i]) is dict:
+				# by design dictionary will only have one key
+				key = labels[i].keys()[0]
+				print "*%s" % key
+				self.recursivePrintEntries(labels[i][key], entries[i], level+1)
+		if level == 0:
+			pass
 
 	def recursivePromptEntry(self, labels, array, level=0):
 		for i in range(len(labels)):
@@ -124,17 +148,8 @@ class xmlCli:
 	
 		if level == 0:
 			#!print array
+			#!self.recursivePrintEntries(self.xmlEntryDef, array)
 			pass
-
-	def recursiveAddEntry(self, labels, entries, level=0):
-		for i in range(len(labels)):
-			if type(labels[i]) is str:
-				print labels[i], "->",entries[i]
-			if type(labels[i]) is dict:
-				# by design dictionary will only have one key
-				key = labels[i].keys()[0]
-				print "*%s" % key
-				self.recursiveAddEntry(labels[i][key], entries[i], level+1)
 
 	def getUserInput(self):
 		# At this point in time there is no helpful printing of existing entries or autocomplete
