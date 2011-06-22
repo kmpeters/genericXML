@@ -1,6 +1,13 @@
 #!/usr/bin/env python
+#
+# xmlLog's command-line interface
+#
 
-class genXml:
+import sys
+import os
+import xmlLog
+
+class xmlCli:
 	def __init__(self):
 		self.userDefinitions()
 
@@ -162,7 +169,7 @@ class genXml:
 			# Alternately could use the script location (sys.argv[0]), but that seems like a bad decision
 
 		#
-		return kmpXML.kmpXML(filename, self.xmlRoot) 
+		return xmlLog.xmlLog(filename, self.xmlRoot) 
 
 	def main(self):
 		run = self.xmlLog.run
@@ -185,10 +192,6 @@ class genXml:
 					run = self.commands[cmndKey](*args)
 
 if __name__ == "__main__":
-	import sys
-	import os
-	import kmpXML
-
-	ui = genXml()			
-	ui.main()
+	cli = xmlCli()			
+	cli.main()
 

@@ -1,13 +1,13 @@
 #!/usr/bin/env python
 #
-# Kevin's XML module
+# xmlLog module
 #
 
 import xml.etree.ElementTree as etree
 import shutil
 import os.path
 
-class kmpXML:
+class xmlLog:
 	def __init__(self, filename, xmlRoot):
 		self.run = True
 		self.dirty = False
