@@ -33,7 +33,8 @@ class xmlCli:
 				    "a": self.addData,
 				 "quit": self.quit,
 				 "save": self.save,
-				    "s": self.save
+				    "s": self.save,
+				 "dump": self.dump
 			   }
 
 		self.xmlFilename = "generic_log.xml"
@@ -76,11 +77,14 @@ class xmlCli:
 		return True
 	# End dummy functions
 
+	def dump(self, *args):
+		self.xmlLog.dumpTest(self.xmlLog.root)
+		return True
+
 	def printXmlDef(self, *args):
 		#!print "printStuff(", args, ")"
 		#!print self.xmlEntryDef
 		self.recursivePrintList(self.xmlEntryDef)
-	
 		return True
 
 	def recursivePrintList(self, arg, level=0):

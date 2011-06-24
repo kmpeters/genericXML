@@ -29,7 +29,12 @@ class xmlLog:
 			print filename, "DOES NOT EXIST!"
 
 			# Ask the user if the file should be created
-			decision = raw_input("Would you like to create it? (y/n) ")
+			try:
+				decision = raw_input("Would you like to create it? (y/n) ")
+			except KeyboardInterrupt:
+				print
+				decision = "No"
+
 			if decision in ("Yes", "yes", "Y", "y"):
 				# Create the file
 				print "Creating %s" % filename
@@ -42,6 +47,12 @@ class xmlLog:
 			print "Reading %s" % filename
 			self.tree, self.root = self.readXML(filename)
 
+	def dumpTest(self, elem):
+		# In python 2.7 getiterator() is replaced with iter()
+		for i in elem.getiterator():
+			print i
+			# In later versions tostring will accept a method arg to change output
+			print etree.tostring(i)
 
 	def recursiveGetElemContent(self, elem, array, level=0):
 		for e in elem:
