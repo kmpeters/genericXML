@@ -18,7 +18,7 @@ class xmlCli:
 		self.userDefinitions()
 
 		# Open the log file
-		self.xmlLog = self.openLogFile()
+		self.xmlLog = self._openLogFile()
 
 	def userDefinitions(self):
 		self.commands = { 
@@ -84,10 +84,10 @@ class xmlCli:
 	def printXmlDef(self, *args):
 		#!print "printStuff(", args, ")"
 		#!print self.xmlEntryDef
-		self.recursivePrintList(self.xmlEntryDef)
+		self._recursivePrintList(self.xmlEntryDef)
 		return True
 
-	def recursivePrintList(self, arg, level=0):
+	def _recursivePrintList(self, arg, level=0):
 		indentStr = "    "
 		for i in arg:
 			if type(i) is str:
@@ -98,11 +98,11 @@ class xmlCli:
 				key = i.keys()[0]
 				#!print i, "is a dictionary"
 				print indentStr * level + key
-				self.recursivePrintList(i[key], level+1)
+				self._recursivePrintList(i[key], level+1)
 			else:
 				print "Error: ", type(i)
 
-	def recursiveDisplayXmlEntry(self, labels, index, entry, level=0):
+	def _recursiveDisplayXmlEntry(self, labels, index, entry, level=0):
 		if level == 0:
 			print "index:\t\t%s" % index
 
@@ -115,21 +115,21 @@ class xmlCli:
 			elif type(labels[i]) is dict:
 				# by design dictionary will only have one key
 				key = labels[i].keys()[0]
-				self.recursiveDisplayXmlEntry(labels[i][key], index, entry[i], level+1)
+				self._recursiveDisplayXmlEntry(labels[i][key], index, entry[i], level+1)
 
 		if level == 0:
 			print
 
-	def displayXmlLog(self, contentArray):
+	def _displayXmlLog(self, contentArray):
 		print
 		for i in range(len(contentArray)):
 			index = i + 1
-			self.recursiveDisplayXmlEntry(self.xmlEntryDef, index, contentArray[i])
+			self._recursiveDisplayXmlEntry(self.xmlEntryDef, index, contentArray[i])
 
 	def printXmlLog(self, *args):
 		contentArray = self.xmlLog.getPrintLogArray()
 		#!print contentArray
-		self.displayXmlLog(contentArray)
+		self._displayXmlLog(contentArray)
 
 		return True
 
@@ -138,7 +138,11 @@ class xmlCli:
 			print "Exiting..."
 			return False
 		else:
-			raw_ack = raw_input("You have unsaved changes, are you sure you want to quit without saving? ")
+			try:
+				raw_ack = raw_input("You have unsaved changes, are you sure you want to quit without saving? ")
+			except KeyboardInterrupt:
+				print
+				raw_ack = "No"
 			ack = string.strip(raw_ack)
 			if ack in ("Yes", "yes", 'Y', 'y'):
 				print "Discarding changes and exiting..."
@@ -164,7 +168,7 @@ class xmlCli:
 		if level == 0:
 			pass
 
-	def recursivePromptEntry(self, labels, array, level=0):
+	def _recursivePromptEntry(self, labels, array, level=0):
 		for i in range(len(labels)):
 			if type(labels[i]) is str:
 				# Allow for printing auto-complete suggestions or customizing prompt
@@ -179,7 +183,7 @@ class xmlCli:
 				# by design dictionary will only have one key
 				key = labels[i].keys()[0]
 				print "  " * level + "[%s]" % key
-				self.recursivePromptEntry(labels[i][key], array[i], level+1)
+				self._recursivePromptEntry(labels[i][key], array[i], level+1)
 			else:
 				print "--> Unhandled prompt entry type: ", type(labels[i])
 	
@@ -188,24 +192,24 @@ class xmlCli:
 			#!self.recursivePrintEntries(self.xmlEntryDef, array)
 			pass
 
-	def getUserInput(self):
+	def _getUserInput(self):
 		# At this point in time there is no helpful printing of existing entries or autocomplete
 		userInput = []
-		self.recursivePromptEntry(self.xmlEntryDef, userInput)
+		self._recursivePromptEntry(self.xmlEntryDef, userInput)
 		return userInput[:]
 
 	def addData(self, *args):
 		print "addData(", args, ")"
 	
 		print
-		userEntries = self.getUserInput()
+		userEntries = self._getUserInput()
 		print
 
 		self.xmlLog.addEntry(userEntries)
 	
 		return True
 
-	def openLogFile(self):
+	def _openLogFile(self):
 		# Allow the user to specify an xml file when running the script
 		if len(sys.argv) > 1:
 			filename = sys.argv[1]

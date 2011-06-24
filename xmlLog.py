@@ -9,6 +9,7 @@ import os.path
 
 class xmlLog:
 	def __init__(self, filename, xmlRoot, xmlEntry, xmlEntryDef):
+		# access directly from cli: run, dirty, root
 		self.run = True
 		self.dirty = False
 		self.filename = filename
@@ -38,7 +39,7 @@ class xmlLog:
 			if decision in ("Yes", "yes", "Y", "y"):
 				# Create the file
 				print "Creating %s" % filename
-				self.createEmptyXML(filename, xmlRoot)
+				self._createEmptyXML(filename, xmlRoot)
 			else:
 				self.run = False
 
@@ -54,7 +55,7 @@ class xmlLog:
 			# In later versions tostring will accept a method arg to change output
 			print etree.tostring(i)
 
-	def recursiveGetElemContent(self, elem, array, level=0):
+	def _recursiveGetElemContent(self, elem, array, level=0):
 		for e in elem:
 			if len(e) == 0:
 				if e.text == None:
@@ -66,7 +67,7 @@ class xmlLog:
 			else:
 				#!print "    " * level + e.tag
 				array.append([])
-				self.recursiveGetElemContent(e, array[len(array)-1], level+1)
+				self._recursiveGetElemContent(e, array[len(array)-1], level+1)
 
 		if level == 0:
 			return array[:]
@@ -77,12 +78,12 @@ class xmlLog:
 			#!print elem
 			elemArray = []
 			if elem.tag == self.xmlEntry:
-				array = self.recursiveGetElemContent(elem, elemArray)
+				array = self._recursiveGetElemContent(elem, elemArray)
 				#!print array, len(array)
 				logArray.append( array )
 		return logArray[:]
 
-	def recursiveAddElem(self, labels, entries, elem, level=0):
+	def _recursiveAddElem(self, labels, entries, elem, level=0):
 		for i in range(len(labels)):
 			if type(labels[i]) is str:
 				e = etree.SubElement(elem, labels[i])
@@ -90,25 +91,25 @@ class xmlLog:
 			if type(labels[i]) is dict:
 				key = labels[i].keys()[0]
 				e = etree.SubElement(elem, key)
-				self.recursiveAddElem(labels[i][key], entries[i], e, level+1)
+				self._recursiveAddElem(labels[i][key], entries[i], e, level+1)
 
 		if level == 0:
 			pass
 
-	def appendEntry(self, root, entryStr):
+	def _appendEntry(self, root, entryStr):
 		length = len(root) + 1
 		entry = etree.SubElement(root, entryStr, index="%i" % length)
 		return entry
 
 	def addEntry(self, entries):
 		# Add an entry to the root
-		entry = self.appendEntry(self.root, self.xmlEntry)
+		entry = self._appendEntry(self.root, self.xmlEntry)
 		# Populate the entry with the users input
-		self.recursiveAddElem(self.xmlEntryDef, entries, entry)
+		self._recursiveAddElem(self.xmlEntryDef, entries, entry)
 		# Set the dirty flag
 		self.dirty = True
 
-	def indent(self, elem, level=0):
+	def _indent(self, elem, level=0):
 		i = "\n" + level*"  "
 		if len(elem):
 			if not elem.text or not elem.text.strip():
@@ -116,20 +117,20 @@ class xmlLog:
 			if not elem.tail or not elem.tail.strip():
 				elem.tail = i
 			for elem in elem:
-				self.indent(elem, level+1)
+				self._indent(elem, level+1)
 			if not elem.tail or not elem.tail.strip():
 				elem.tail = i
 		else:
 			if level and (not elem.tail or not elem.tail.strip()):
 				elem.tail = i
 
-	def createEmptyXML(self, filename, xmlRoot):
+	def _createEmptyXML(self, filename, xmlRoot):
 		tree = etree.ElementTree()
 		root = etree.Element(xmlRoot)
 		# Add a comment so an empty xml file can be properly read
 		comment = etree.Comment("This is an empty file")
 		root.append(comment)
-		self.indent(root)
+		self._indent(root)
 		tree._setroot(root)
 		tree.write(filename)
 
@@ -144,7 +145,7 @@ class xmlLog:
 		newfilename = "%s.bup" % self.filename
 		shutil.move(self.filename, newfilename)
 		# Make tree presentable
-		self.indent(self.root)
+		self._indent(self.root)
 		# Write file
 		self.tree.write(self.filename)
 		# Clear the dirty flag
