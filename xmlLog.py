@@ -69,8 +69,10 @@ class xmlLog:
 				array.append([])
 				self._recursiveGetElemContent(e, array[len(array)-1], level+1)
 
-		if level == 0:
-			return array[:]
+	def getPrintElemArray(self, index):
+		elemArray = []
+		self._recursiveGetElemContent(self.root[index], elemArray)
+		return elemArray[:]
 
 	def getPrintLogArray(self):
 		logArray = []
@@ -78,9 +80,8 @@ class xmlLog:
 			#!print elem
 			elemArray = []
 			if elem.tag == self.xmlEntry:
-				array = self._recursiveGetElemContent(elem, elemArray)
-				#!print array, len(array)
-				logArray.append( array )
+				self._recursiveGetElemContent(elem, elemArray)
+				logArray.append( elemArray[:] )
 		return logArray[:]
 
 	def _recursiveAddElem(self, labels, entries, elem, level=0):

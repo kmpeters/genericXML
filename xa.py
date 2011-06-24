@@ -28,7 +28,8 @@ class xmlCli:
 				    "d": self.printXmlDef,
 				"print": self.printXmlLog,
 				    "p": self.printXmlLog,
-				    "c": self.dummy,
+			      "correct": self.correctEntry,
+				    "c": self.correctEntry,
 				  "add": self.addData,
 				    "a": self.addData,
 				 "quit": self.quit,
@@ -71,10 +72,6 @@ class xmlCli:
 	def showHelp(self, *args):
 		print "showHelp(", args, ")"
 		return True
-
-	def correct(self, *args):
-		print "correct(", args, ")"
-		return True
 	# End dummy functions
 
 	def dump(self, *args):
@@ -115,6 +112,7 @@ class xmlCli:
 			elif type(labels[i]) is dict:
 				# by design dictionary will only have one key
 				key = labels[i].keys()[0]
+				# index doesn't really need to be passed to the lower levels, maybe make it optional
 				self._recursiveDisplayXmlEntry(labels[i][key], index, entry[i], level+1)
 
 		if level == 0:
@@ -155,19 +153,6 @@ class xmlCli:
 		self.xmlLog.saveXML()
 		return True
 
-	# Diagnostic function which at the moment isn't particularly useful. May help for correct functionality.
-	def recursivePrintEntries(self, labels, entries, level=0):
-		for i in range(len(labels)):
-			if type(labels[i]) is str:
-				print labels[i], "->",entries[i]
-			if type(labels[i]) is dict:
-				# by design dictionary will only have one key
-				key = labels[i].keys()[0]
-				print "*%s" % key
-				self.recursivePrintEntries(labels[i][key], entries[i], level+1)
-		if level == 0:
-			pass
-
 	def _recursivePromptEntry(self, labels, array, level=0):
 		for i in range(len(labels)):
 			if type(labels[i]) is str:
@@ -207,6 +192,44 @@ class xmlCli:
 
 		self.xmlLog.addEntry(userEntries)
 	
+		return True
+
+	def correctEntry(self, *args):
+		#!print "correctEntry(", args, ")"
+
+		lastEntryIndex = len(self.xmlLog.root)
+
+		# Determine desired entry
+		if len(args) > 0:
+			try:
+				rawEntryIndex = int(args[0])
+				if rawEntryIndex < 1:
+					entryIndex = 1
+				elif rawEntryIndex > lastEntryIndex:
+					entryIndex = lastEntryIndex
+				else:
+					entryIndex = rawEntryIndex
+			except ValueError:
+				print "\"%s\" is not an integer. Try again." % args[0]
+				return True
+		else:
+			# No argument was specified
+			entryIndex = lastEntryIndex
+
+		# Entry indices are number from one
+		arrayIndex = entryIndex - 1
+
+		# Get the desired entry
+		entryArray = self.xmlLog.getPrintElemArray(arrayIndex)
+
+		# Print the desired entry
+		print ""
+		print "Editing Entry #%s" % entryIndex
+		print ""
+		self._recursiveDisplayXmlEntry(self.xmlEntryDef, entryIndex, entryArray)
+
+		# Prompt user for changes
+		# Correct entry
 		return True
 
 	def _openLogFile(self):
