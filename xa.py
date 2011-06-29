@@ -11,12 +11,15 @@
 import sys
 import os
 import string
+import readline
+
 import xmlLog
 
 class xmlCli:
 	def __init__(self):
 		self.userDefinitions()
 		self.run = True
+		self.broken = False
 
 		# Open the log file
 		self.xmlLog = self._openLogFile()
@@ -156,14 +159,28 @@ class xmlCli:
 
 	def _recursivePromptEntry(self, labels, array, level=0):
 		for i in range(len(labels)):
+			if self.broken == True:
+				break
 			if type(labels[i]) is str:
 				# Allow for printing auto-complete suggestions or customizing prompt
 				self.prePromptHook(labels[i])
 				# Generic promptStr
 				promptStr = "  " * level + "%s: " % labels[i]
 				# Will it be possible to validate response?
-				response = raw_input(promptStr)
-				array.append(response)
+				# Catch KeyboardInterrupt to all the user to exit the entry process
+				try:
+					response = raw_input(promptStr)
+					array.append(response)
+
+					# Remove entry items from command history
+					if response != '':
+						pos = readline.get_current_history_length() - 1
+						readline.remove_history_item(pos)
+
+				except KeyboardInterrupt:
+					self.broken = True
+					break
+
 			elif type(labels[i]) is dict:
 				array.append([])
 				# by design dictionary will only have one key
@@ -191,7 +208,11 @@ class xmlCli:
 		userEntries = self._getUserInput()
 		print
 
-		self.xmlLog.addEntry(userEntries)
+		# Only add the entry if the user didn't Ctrl+c out of it
+		if self.broken == False:
+			self.xmlLog.addEntry(userEntries)
+		else:
+			self.broken = False
 	
 		return True
 
@@ -231,9 +252,13 @@ class xmlCli:
 
 		# Prompt user for changes
 		userCorrections = self._getUserInput()
+		print ""
 
-		# Correct entry
-		self.xmlLog.correctEntry(arrayIndex, userCorrections)
+		# Correct entry if the user didn't Ctrl+c out of it
+		if self.broken == False:
+			self.xmlLog.correctEntry(arrayIndex, userCorrections)
+		else:
+			self.broken = False
 
 		return True
 
