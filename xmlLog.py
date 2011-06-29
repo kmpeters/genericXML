@@ -10,7 +10,6 @@ import os.path
 class xmlLog:
 	def __init__(self, filename, xmlRoot, xmlEntry, xmlEntryDef):
 		# access directly from cli: run, dirty, root
-		self.run = True
 		self.dirty = False
 		self.filename = filename
 
@@ -25,28 +24,13 @@ class xmlLog:
 		self.xmlEntry = xmlEntry
 		self.xmlEntryDef = xmlEntryDef
 
-		# Check to see if the file exists
+		# Check to see if file exists
 		if not os.path.isfile(filename):
-			print filename, "DOES NOT EXIST!"
+			# Assume user wants file created (ui is responsible for aborting)
+			self._createEmptyXML(filename, xmlRoot)
 
-			# Ask the user if the file should be created
-			try:
-				decision = raw_input("Would you like to create it? (y/n) ")
-			except KeyboardInterrupt:
-				print
-				decision = "No"
-
-			if decision in ("Yes", "yes", "Y", "y"):
-				# Create the file
-				print "Creating %s" % filename
-				self._createEmptyXML(filename, xmlRoot)
-			else:
-				self.run = False
-
-		if self.run == True:
-			# Read the file
-			print "Reading %s" % filename
-			self.tree, self.root = self.readXML(filename)
+		# Read the file
+		self.tree, self.root = self.readXML(filename)
 
 	def dumpTest(self, elem):
 		# In python 2.7 getiterator() is replaced with iter()

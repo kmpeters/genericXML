@@ -16,6 +16,7 @@ import xmlLog
 class xmlCli:
 	def __init__(self):
 		self.userDefinitions()
+		self.run = True
 
 		# Open the log file
 		self.xmlLog = self._openLogFile()
@@ -240,14 +241,34 @@ class xmlCli:
 			filename = "%s/%s" % (os.getcwd(), self.xmlFilename)
 			# Alternately could use the script location (sys.argv[0]), but that seems like a bad decision
 
-		#
-		return xmlLog.xmlLog(filename, self.xmlRoot, self.xmlEntry, self.xmlEntryDef[:]) 
+		# Check to see if the file exists
+		if not os.path.isfile(filename):
+			print filename, "DOES NOT EXIST!"
+
+			# Ask the user if the file should be created
+			try:
+				decision = raw_input("Would you like to create it? (y/n) ")
+			except KeyboardInterrupt:
+				print
+				decision = "No"
+
+			if decision in ("Yes", "yes", "Y", "y"):
+				# Create the file
+				print "Creating %s" % filename
+			else:
+				self.run = False
+
+		if self.run == True:
+			print "Reading %s" % filename
+			log = xmlLog.xmlLog(filename, self.xmlRoot, self.xmlEntry, self.xmlEntryDef[:])
+		else:
+			log = None
+
+		return log
 
 	def main(self):
-		run = self.xmlLog.run
-
 		# Enter command interpreter mode
-		while ( run ):
+		while ( self.run ):
 			try:
 				cmnd = raw_input(" > ")
 			except KeyboardInterrupt:
@@ -261,7 +282,7 @@ class xmlCli:
 				#!print cmnd, cmndKey, commands.keys()
 				if cmndKey in self.commands.keys():
 					#!print commands[cmndKey]
-					run = self.commands[cmndKey](*args)
+					self.run = self.commands[cmndKey](*args)
 
 if __name__ == "__main__":
 	cli = xmlCli()			
