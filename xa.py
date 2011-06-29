@@ -179,6 +179,8 @@ class xmlCli:
 
 				except KeyboardInterrupt:
 					self.broken = True
+					print ""
+					print "Aborting..."
 					break
 
 			elif type(labels[i]) is dict:
