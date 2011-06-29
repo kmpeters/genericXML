@@ -73,7 +73,7 @@ class xmlLog:
 			if type(labels[i]) is str:
 				e = etree.SubElement(elem, labels[i])
 				e.text = entries[i]
-			if type(labels[i]) is dict:
+			elif type(labels[i]) is dict:
 				key = labels[i].keys()[0]
 				e = etree.SubElement(elem, key)
 				self._recursiveAddElem(labels[i][key], entries[i], e, level+1)
@@ -93,6 +93,20 @@ class xmlLog:
 		self._recursiveAddElem(self.xmlEntryDef, entries, entry)
 		# Set the dirty flag
 		self.dirty = True
+
+	def _recursiveCorrectElem(self, labels, entries, elem, level=0):
+		for i in range(len(labels)):
+			if type(labels[i]) is str:
+				if entries[i] != '':
+					print "Changing %s to %s" % (elem[i].text, entries[i])
+					elem[i].text = entries[i]
+			elif type(labels[i]) is dict:
+				key = labels[i].keys()[0]
+				self._recursiveCorrectElem(labels[i][key], entries[i], elem[i], level+1)
+
+	def correctEntry(self, index, corrections):
+		#
+		self._recursiveCorrectElem(self.xmlEntryDef, corrections, self.root[index])
 
 	def _indent(self, elem, level=0):
 		i = "\n" + level*"  "

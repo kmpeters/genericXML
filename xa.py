@@ -230,7 +230,11 @@ class xmlCli:
 		self._recursiveDisplayXmlEntry(self.xmlEntryDef, entryIndex, entryArray)
 
 		# Prompt user for changes
+		userCorrections = self._getUserInput()
+
 		# Correct entry
+		self.xmlLog.correctEntry(arrayIndex, userCorrections)
+
 		return True
 
 	def _openLogFile(self):
