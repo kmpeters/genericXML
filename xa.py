@@ -22,7 +22,14 @@ class xmlCli:
 		self.broken = False
 
 		# Open the log file
-		self.xmlLog = self._openLogFile()
+		self.filename = self._getLogFilename()
+
+		if self.run == True:
+			print "Reading %s" % self.filename
+			self.xmlLog = xmlLog.xmlLog(self.filename, self.xmlRoot, self.xmlEntry, self.xmlEntryDef[:])
+		else:
+			# This probably isn't necessary
+			self.xmlLog = None
 
 	def userDefinitions(self):
 		self.commands = { 
@@ -264,7 +271,7 @@ class xmlCli:
 
 		return True
 
-	def _openLogFile(self):
+	def _getLogFilename(self):
 		# Allow the user to specify an xml file when running the script
 		if len(sys.argv) > 1:
 			filename = sys.argv[1]
@@ -289,13 +296,7 @@ class xmlCli:
 			else:
 				self.run = False
 
-		if self.run == True:
-			print "Reading %s" % filename
-			log = xmlLog.xmlLog(filename, self.xmlRoot, self.xmlEntry, self.xmlEntryDef[:])
-		else:
-			log = None
-
-		return log
+		return filename
 
 	def main(self):
 		# Enter command interpreter mode
