@@ -18,8 +18,12 @@ import xmlLog
 class xmlCli:
 	def __init__(self):
 		self.userDefinitions()
+		# Flag to continue prompting for commands
 		self.run = True
+		# Flag to abort when keyboard interrupt
 		self.broken = False
+		# Flag to switch input auto-correct behavior
+		self.correcting = False
 
 		# Open the log file
 		self.filename = self._getLogFilename()
@@ -72,8 +76,11 @@ class xmlCli:
 			]
 
 	### Functions to customize (and maybe move to a different file)
-	def prePromptHook(self, arg):
-		return
+	def prePromptHook(self, label, array):
+		return True
+
+	def postPromptHook(self, lable, array, response):
+		return True
 
 	# Begin dummy functions
 	def dummy(self, *args):
@@ -169,26 +176,43 @@ class xmlCli:
 			if self.broken == True:
 				break
 			if type(labels[i]) is str:
-				# Allow for printing auto-complete suggestions or customizing prompt
-				self.prePromptHook(labels[i])
-				# Generic promptStr
-				promptStr = "  " * level + "%s: " % labels[i]
-				# Will it be possible to validate response?
-				# Catch KeyboardInterrupt to all the user to exit the entry process
-				try:
-					response = raw_input(promptStr)
-					array.append(response)
+				# Allow for printing auto-complete suggestions or skipping entry of elements (customizing prompt requires more args)
+				stillDoPrompt = self.prePromptHook(labels[i], array)
 
-					# Remove entry items from command history
-					if response != '':
-						pos = readline.get_current_history_length() - 1
-						readline.remove_history_item(pos)
+				if stillDoPrompt == True:
+					# Generic promptStr
+					promptStr = "  " * level + "%s: " % labels[i]
+					# Will it be possible to validate response?
 
-				except KeyboardInterrupt:
-					self.broken = True
-					print ""
-					print "Aborting..."
-					break
+					# Catch KeyboardInterrupt to all the user to exit the entry process
+					try:
+						response = raw_input(promptStr)
+
+						# Allow correction of response or insertion of default value of current or previously skipped field
+						stillAppendResponse = self.postPromptHook(labels[i], array, response)
+
+						if stillAppendResponse == True:
+							array.append(response)
+						else:
+							# post prompt hook must have appended to the array
+							pass
+
+						print "array = ", array
+
+						# Remove entry items from command history
+						if response != '':
+							pos = readline.get_current_history_length() - 1
+							readline.remove_history_item(pos)
+
+					except KeyboardInterrupt:
+						self.broken = True
+						print ""
+						print "Aborting..."
+						break
+
+				else:
+					# pre prompt hook must have appended to the array, or let it be handled by post prompt hook
+					continue
 
 			elif type(labels[i]) is dict:
 				array.append([])
@@ -211,11 +235,11 @@ class xmlCli:
 		return userInput[:]
 
 	def addData(self, *args):
-		print "addData(", args, ")"
+		#!print "addData(", args, ")"
 	
-		print
+		print ""
 		userEntries = self._getUserInput()
-		print
+		print ""
 
 		# Only add the entry if the user didn't Ctrl+c out of it
 		if self.broken == False:
@@ -260,7 +284,9 @@ class xmlCli:
 		self._recursiveDisplayXmlEntry(self.xmlEntryDef, entryIndex, entryArray)
 
 		# Prompt user for changes
+		self.correcting = True
 		userCorrections = self._getUserInput()
+		self.correcting = False
 		print ""
 
 		# Correct entry if the user didn't Ctrl+c out of it
