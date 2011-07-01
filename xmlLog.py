@@ -68,6 +68,8 @@ class xmlLog:
 				logArray.append( elemArray[:] )
 		return logArray[:]
 
+	# _recursiveAddElem does not currently handle optional elements, which result
+	# in the entries array being a different size than the labels array
 	def _recursiveAddElem(self, labels, entries, elem, level=0):
 		for i in range(len(labels)):
 			if type(labels[i]) is str:
@@ -94,6 +96,7 @@ class xmlLog:
 		# Set the dirty flag
 		self.dirty = True
 
+	# _recursiveCorrectElem doesn't currently handle optional elements.
 	def _recursiveCorrectElem(self, labels, entries, elem, level=0):
 		for i in range(len(labels)):
 			if type(labels[i]) is str:
